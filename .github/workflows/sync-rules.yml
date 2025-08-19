@@ -1,0 +1,176 @@
+name: Sync Rules
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # Run daily at 10:00 JST (UTC+9) -> 01:00 UTC
+    - cron: "0 1 * * *"
+
+  push:
+    paths:
+      - ".github/workflows/sync-rules.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ⬇️ Sparse checkout upstream repos to save time/bandwidth
+      - name: Checkout upstream (dler-io/Rules) — sparse
+        uses: actions/checkout@v4
+        with:
+          repository: dler-io/Rules
+          ref: main
+          path: upstream_dler
+          fetch-depth: 1
+          sparse-checkout: |
+            Clash/Provider
+            Surge/Surge 3/Provider
+          sparse-checkout-cone: true
+
+      - name: Checkout upstream (GeQ1an/Rules) — sparse
+        uses: actions/checkout@v4
+        with:
+          repository: GeQ1an/Rules
+          ref: master
+          path: upstream_geq
+          fetch-depth: 1
+          sparse-checkout: |
+            QuantumultX
+          sparse-checkout-cone: true
+
+      - name: Checkout upstream (MetaCubeX/meta-rules-dat) — sparse
+        uses: actions/checkout@v4
+        with:
+          repository: MetaCubeX/meta-rules-dat
+          ref: sing
+          path: upstream_meta
+          fetch-depth: 1
+          sparse-checkout: |
+            geo
+          sparse-checkout-cone: true
+
+      - name: Checkout upstream (VirgilClyne/GetSomeFries) — sparse
+        uses: actions/checkout@v4
+        with:
+          repository: VirgilClyne/GetSomeFries
+          ref: main
+          path: upstream_fries
+          fetch-depth: 1
+          sparse-checkout: |
+            ruleset
+          sparse-checkout-cone: true
+
+      - name: Rewrite Clash only Provider (dler-io → Clash)
+        run: |
+          set -euo pipefail
+          if [ -d "upstream_dler/Clash/Provider" ]; then
+            mkdir -p "Clash"
+            rsync -a --delete "upstream_dler/Clash/Provider/" "Clash/"
+          else
+            echo "Warning: upstream dler-io Clash/Provider not found" >&2
+          fi
+
+      - name: Rewrite Surge only Surge 3/Provider (dler-io → Surge)
+        run: |
+          set -euo pipefail
+          if [ -d "upstream_dler/Surge/Surge 3/Provider" ]; then
+            mkdir -p "Surge"
+            rsync -a --delete "upstream_dler/Surge/Surge 3/Provider/" "Surge/"
+          else
+            echo "Warning: upstream dler-io Surge/Surge 3/Provider not found" >&2
+          fi
+
+      - name: Sync QuantumultX from GeQ1an/Rules
+        run: |
+          set -euo pipefail
+          if [ -d "upstream_geq/QuantumultX" ]; then
+            mkdir -p "QuantumultX"
+            rsync -a --delete "upstream_geq/QuantumultX/" "QuantumultX/"
+          else
+            echo "Warning: upstream GeQ1an QuantumultX not found" >&2
+          fi
+
+      - name: Sync geo from MetaCubeX/meta-rules-dat (→ geo at repo root)
+        run: |
+          set -euo pipefail
+          if [ -d "upstream_meta/geo" ]; then
+            mkdir -p "geo"
+            rsync -a --delete "upstream_meta/geo/" "geo/"
+          else
+            echo "Error: upstream meta-rules-dat 'geo' dir not found" >&2
+            exit 1
+          fi
+
+      - name: Sync ruleset from VirgilClyne/GetSomeFries (→ ruleset at repo root)
+        run: |
+          set -euo pipefail
+          if [ -d "upstream_fries/ruleset" ]; then
+            mkdir -p "ruleset"
+            rsync -a --delete "upstream_fries/ruleset/" "ruleset/"
+          else
+            echo "Error: upstream GetSomeFries 'ruleset' dir not found" >&2
+            exit 1
+          fi
+
+      - name: Force push single-commit state (overwrite history)
+        run: |
+          set -euo pipefail
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Action"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          # Detect target branch (prefer current ref, fallback to remote HEAD)
+          BRANCH="${GITHUB_REF_NAME:-}"
+          if [ -z "$BRANCH" ]; then
+            BRANCH="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
+          fi
+          if [ -z "$BRANCH" ]; then
+            BRANCH="main"
+          fi
+          echo "Target branch: $BRANCH"
+
+          # Start a fresh orphan commit
+          git switch --orphan temp-sync-branch
+          git rm -rf --cached . || true
+
+          # Build keep list dynamically based on actual synced content
+          keep_paths=(.github/workflows/sync-rules.yml)
+          for d in Clash Surge QuantumultX geo ruleset; do
+            if [ -d "$d" ] && find "$d" -type f -not -name ".keep" -print -quit | grep -q .; then
+              keep_paths+=("$d")
+            fi
+          done
+
+          echo "Will keep paths: ${keep_paths[*]}"
+
+          # Guard: if nothing except the workflow file, skip to avoid nuking repo
+          if [ ${#keep_paths[@]} -le 1 ]; then
+            echo "Guard hit: no synced files detected. Skipping force-push to avoid wiping repository."
+            exit 0
+          fi
+
+          git add -- "${keep_paths[@]}"
+          git commit -m "🔄 chore(sync)： $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push --force origin HEAD:"$BRANCH"
+
+          {
+            echo "### Sync completed (force-pushed single commit)"
+            echo
+            echo "- Time (UTC): $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "- Kept paths: ${keep_paths[*]}"
+            echo "- Files included:"
+            git ls-tree -r --name-only HEAD | sed 's/^/  - /'
+          } >> "$GITHUB_STEP_SUMMARY"
