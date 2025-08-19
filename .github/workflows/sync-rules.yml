@@ -3,7 +3,6 @@ name: Sync Rules
 on:
   workflow_dispatch: {}
   schedule:
-    # Run daily at 10:00 JST (UTC+9) -> 01:00 UTC
     - cron: "0 1 * * *"
 
   push:
@@ -27,8 +26,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      # ⬇️ Sparse checkout upstream repos to save time/bandwidth
-      - name: Checkout upstream (dler-io/Rules) — sparse
+      - name: Prepare clean branch (keep workflow only)
+        run: |
+          set -euo pipefail
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Action"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          BRANCH="${GITHUB_REF_NAME:-}"
+          if [ -z "$BRANCH" ]; then
+            BRANCH="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
+          fi
+          if [ -z "$BRANCH" ]; then
+            BRANCH="main"
+          fi
+          echo "Target branch: $BRANCH"
+
+          NEW_BRANCH="temp-sync-$(date -u +%s)"
+          git switch -c "$NEW_BRANCH"
+
+          find . -mindepth 1 -maxdepth 1 \
+            ! -path "./.git" \
+            ! -path "./.github" \
+            -exec rm -rf {} +
+
+          mkdir -p .github/workflows
+          test -f .github/workflows/sync-rules.yml || {
+            echo "Error: workflow file missing after cleanup" >&2; exit 1; }
+
+      - name: Checkout upstream dler-io Rules (sparse)
         uses: actions/checkout@v4
         with:
           repository: dler-io/Rules
@@ -40,7 +66,7 @@ jobs:
             Surge/Surge 3/Provider
           sparse-checkout-cone: true
 
-      - name: Checkout upstream (GeQ1an/Rules) — sparse
+      - name: Checkout upstream GeQ1an Rules (sparse)
         uses: actions/checkout@v4
         with:
           repository: GeQ1an/Rules
@@ -51,7 +77,7 @@ jobs:
             QuantumultX
           sparse-checkout-cone: true
 
-      - name: Checkout upstream (MetaCubeX/meta-rules-dat) — sparse
+      - name: Checkout upstream MetaCubeX meta-rules-dat (sparse)
         uses: actions/checkout@v4
         with:
           repository: MetaCubeX/meta-rules-dat
@@ -62,7 +88,7 @@ jobs:
             geo
           sparse-checkout-cone: true
 
-      - name: Checkout upstream (VirgilClyne/GetSomeFries) — sparse
+      - name: Checkout upstream VirgilClyne GetSomeFries (sparse)
         uses: actions/checkout@v4
         with:
           repository: VirgilClyne/GetSomeFries
@@ -73,7 +99,7 @@ jobs:
             ruleset
           sparse-checkout-cone: true
 
-      - name: Rewrite Clash only Provider (dler-io → Clash)
+      - name: Rewrite Clash only Provider (dler-io to Clash)
         run: |
           set -euo pipefail
           if [ -d "upstream_dler/Clash/Provider" ]; then
@@ -83,7 +109,7 @@ jobs:
             echo "Warning: upstream dler-io Clash/Provider not found" >&2
           fi
 
-      - name: Rewrite Surge only Surge 3/Provider (dler-io → Surge)
+      - name: Rewrite Surge only Surge 3 Provider (dler-io to Surge)
         run: |
           set -euo pipefail
           if [ -d "upstream_dler/Surge/Surge 3/Provider" ]; then
@@ -93,7 +119,7 @@ jobs:
             echo "Warning: upstream dler-io Surge/Surge 3/Provider not found" >&2
           fi
 
-      - name: Sync QuantumultX from GeQ1an/Rules
+      - name: Sync QuantumultX from GeQ1an Rules
         run: |
           set -euo pipefail
           if [ -d "upstream_geq/QuantumultX" ]; then
@@ -103,7 +129,7 @@ jobs:
             echo "Warning: upstream GeQ1an QuantumultX not found" >&2
           fi
 
-      - name: Sync geo from MetaCubeX/meta-rules-dat (→ geo at repo root)
+      - name: Sync geo from MetaCubeX meta-rules-dat (to geo at repo root)
         run: |
           set -euo pipefail
           if [ -d "upstream_meta/geo" ]; then
@@ -114,7 +140,7 @@ jobs:
             exit 1
           fi
 
-      - name: Sync ruleset from VirgilClyne/GetSomeFries (→ ruleset at repo root)
+      - name: Sync ruleset from VirgilClyne GetSomeFries (to ruleset at repo root)
         run: |
           set -euo pipefail
           if [ -d "upstream_fries/ruleset" ]; then
@@ -125,52 +151,23 @@ jobs:
             exit 1
           fi
 
-      - name: Force push single-commit state (overwrite history)
+      - name: Commit and push
         run: |
           set -euo pipefail
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Action"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git add .github/workflows/sync-rules.yml Clash Surge QuantumultX geo ruleset || true
 
-          # Detect target branch (prefer current ref, fallback to remote HEAD)
-          BRANCH="${GITHUB_REF_NAME:-}"
-          if [ -z "$BRANCH" ]; then
-            BRANCH="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
-          fi
-          if [ -z "$BRANCH" ]; then
-            BRANCH="main"
-          fi
-          echo "Target branch: $BRANCH"
-
-          # Start a fresh orphan commit
-          git switch --orphan temp-sync-branch
-          git rm -rf --cached . || true
-
-          # Build keep list dynamically based on actual synced content
-          keep_paths=(.github/workflows/sync-rules.yml)
-          for d in Clash Surge QuantumultX geo ruleset; do
-            if [ -d "$d" ] && find "$d" -type f -not -name ".keep" -print -quit | grep -q .; then
-              keep_paths+=("$d")
-            fi
-          done
-
-          echo "Will keep paths: ${keep_paths[*]}"
-
-          # Guard: if nothing except the workflow file, skip to avoid nuking repo
-          if [ ${#keep_paths[@]} -le 1 ]; then
-            echo "Guard hit: no synced files detected. Skipping force-push to avoid wiping repository."
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit." > /dev/stderr
             exit 0
           fi
 
-          git add -- "${keep_paths[@]}"
-          git commit -m "🔄 chore(sync)： $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          git push --force origin HEAD:"$BRANCH"
+          git commit -m "🔄 chore(sync) $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push --set-upstream origin "$(git branch --show-current)" || true
 
-          {
-            echo "### Sync completed (force-pushed single commit)"
-            echo
-            echo "- Time (UTC): $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "- Kept paths: ${keep_paths[*]}"
-            echo "- Files included:"
-            git ls-tree -r --name-only HEAD | sed 's/^/  - /'
-          } >> "$GITHUB_STEP_SUMMARY"
+          BRANCH="${GITHUB_REF_NAME:-main}"
+          if [ "$BRANCH" != "$(git branch --show-current)" ]; then
+            git fetch origin "$BRANCH" || true
+            git checkout "$BRANCH" || true
+            git merge --ff-only "$(git for-each-ref --format='%(refname:short)' | grep '^temp-sync-' | tail -n1)" || true
+            git push || true
+          fi
