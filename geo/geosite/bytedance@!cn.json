@@ -2,9 +2,14 @@
   "version": 2,
   "rules": [
     {
-      "domain": "p16-tiktokcdn-com.akamaized.net",
+      "domain": [
+        "bytedance.map.fastly.net",
+        "p16-tiktokcdn-com.akamaized.net"
+      ],
       "domain_suffix": [
+        "byteglb.com",
         "byteoversea.com",
+        "byteoversea.net",
         "ibytedtos.com",
         "ibyteimg.com",
         "coze.com",
