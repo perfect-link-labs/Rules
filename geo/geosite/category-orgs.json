@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "csis-prod.s3.amazonaws.com",
         "a.ppy.sh",
         "assets.ppy.sh",
         "c.ppy.sh",
@@ -11,8 +12,7 @@
         "lazer.ppy.sh",
         "notify.ppy.sh",
         "sentry.ppy.sh",
-        "spectator.ppy.sh",
-        "csis-prod.s3.amazonaws.com"
+        "spectator.ppy.sh"
       ],
       "domain_suffix": [
         "aomedia.org",
@@ -29,21 +29,7 @@
         "who.int",
         "wi-fi.org",
         "wto.org",
-        "openmaps.org",
-        "openstreetmap.com",
-        "openstreetmap.net",
-        "openstreetmap.org",
-        "openstreetmaps.org",
-        "osm.org",
-        "osmfoundation.org",
-        "stateofthemap.com",
-        "stateofthemap.org",
-        "paskoocheh.com",
-        "ppy.sh",
-        "ccstatic.org",
-        "creativecommons.org",
-        "creativecommons.engineering",
-        "licensebuttons.net",
+        "csis.org",
         "emojipedia.org",
         "worldemojiawards.com",
         "worldemojiday.com",
@@ -106,6 +92,16 @@
         "signalprocessingsociety.org",
         "technologyandsociety.org",
         "vtsociety.org",
+        "openmaps.org",
+        "openstreetmap.com",
+        "openstreetmap.net",
+        "openstreetmap.org",
+        "openstreetmaps.org",
+        "osm.org",
+        "osmfoundation.org",
+        "stateofthemap.com",
+        "stateofthemap.org",
+        "paskoocheh.com",
         "rolfoundation.org",
         "rolsociety.org",
         "archive-it.org",
@@ -116,7 +112,6 @@
         "openlibrary.org",
         "4pcdn.org",
         "4plebs.org",
-        "csis.org",
         "acousticbrainz.org",
         "bookbrainz.org",
         "coverartarchive.org",
@@ -126,7 +121,12 @@
         "metabrainz.org",
         "musicbrainz.org",
         "nist.gov",
-        "time.gov"
+        "time.gov",
+        "ppy.sh",
+        "ccstatic.org",
+        "creativecommons.org",
+        "creativecommons.engineering",
+        "licensebuttons.net"
       ]
     }
   ]
