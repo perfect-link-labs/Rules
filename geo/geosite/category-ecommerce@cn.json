@@ -3,9 +3,6 @@
   "rules": [
     {
       "domain_suffix": [
-        "hm.com.cn",
-        "adidas.com.cn",
-        "muji.com.cn",
         "just-do-it.cn",
         "nike-shox.cn",
         "nike.cn",
@@ -26,17 +23,9 @@
         "nikerunclub.com.cn",
         "nikerunning.com.cn",
         "nikestore.cn",
-        "bestbuy.cn",
-        "bestbuy.com.cn",
-        "magnoliaav.com.cn",
-        "booking.cn",
-        "gucci.cn",
         "shopee.cn",
         "shopeesz.com",
-        "walmart.cn",
-        "miniso.cn",
-        "minisohome.cn",
-        "minsio.cn",
+        "booking.cn",
         "adcommerce.cn",
         "appforebay.cn",
         "connectcommerce.cn",
@@ -80,7 +69,18 @@
         "ikea.cn",
         "ingka-dt.cn",
         "ingka-internal.cn",
-        "ingka-system.cn"
+        "ingka-system.cn",
+        "miniso.cn",
+        "minisohome.cn",
+        "minsio.cn",
+        "muji.com.cn",
+        "adidas.com.cn",
+        "hm.com.cn",
+        "walmart.cn",
+        "bestbuy.cn",
+        "bestbuy.com.cn",
+        "magnoliaav.com.cn",
+        "gucci.cn"
       ]
     }
   ]

@@ -17,9 +17,11 @@
         "rtlog5-applog-hl.fqnovel.com"
       ],
       "domain_suffix": [
-        "ads.service.kugou.com",
-        "adserviceretry.kglink.cn",
-        "adserviceretry.kugou.com",
+        "click.gamersky.com",
+        "ja.gamersky.com",
+        "ja1.gamersky.com",
+        "ja2.gamersky.com",
+        "wmbd.gamersky.com",
         "api.game.letvstore.com",
         "ark.letv.com",
         "dc.letv.com",
@@ -44,11 +46,6 @@
         "log.hunantv.com",
         "log.v2.hunantv.com",
         "res.hunantv.com",
-        "click.gamersky.com",
-        "ja.gamersky.com",
-        "ja1.gamersky.com",
-        "ja2.gamersky.com",
-        "wmbd.gamersky.com",
         "a.ckm.iqiyi.com",
         "ad.m.iqiyi.com",
         "afp.iqiyi.com",
@@ -65,7 +62,10 @@
         "msg.video.qiyi.com",
         "msg2.video.qiyi.com",
         "policy.video.iqiyi.com",
-        "yuedu.iqiyi.com"
+        "yuedu.iqiyi.com",
+        "ads.service.kugou.com",
+        "adserviceretry.kglink.cn",
+        "adserviceretry.kugou.com"
       ]
     }
   ]
