@@ -17,9 +17,6 @@
         "xz.pphimalayanrt.com"
       ],
       "domain_suffix": [
-        "sl916.com",
-        "kurogames.com",
-        "aki-game.com",
         "battlecare.net",
         "gameitop.com",
         "gameloop.com",
@@ -105,12 +102,15 @@
         "anticheatexpert.com",
         "17roco.com",
         "roco.qq.com",
+        "sl916.com",
         "bilibiligame.cn",
         "bilibiligame.co",
         "bilibiligame.net",
         "biligame.co",
         "biligame.com",
         "biligame.net",
+        "kurogames.com",
+        "aki-game.com",
         "mhystatic.com",
         "mhyurl.cn",
         "mihayo.com",
@@ -128,6 +128,8 @@
         "juequling.com",
         "xboxlive.cn",
         "bluearchive-cn.com",
+        "leagueoflegends.cn",
+        "lpl.com.cn",
         "legendofzelda.cn",
         "legendofzelda.com.cn",
         "miitomo.com.cn",
@@ -140,8 +142,6 @@
         "mariokart.cn",
         "mariokart.com.cn",
         "supermariobros.com.cn",
-        "leagueoflegends.cn",
-        "lpl.com.cn",
         "steamserver.net",
         "steamusercontent.com",
         "csgo.wmsj.cn",
@@ -159,11 +159,11 @@
       ],
       "domain_regex": [
         "^.+-mihayo\\.akamaized\\.net$",
+        "^cdn\\d-epicgames-\\d+\\.file\\.myqcloud\\.com$",
+        "^epicgames-download\\d-\\d+\\.file\\.myqcloud\\.com$",
         "^cdn-akamai-.+\\.gog-services\\.com$",
         "^gog-cdn-.+\\.footprint\\.net$",
-        "^images(-\\d)?\\.gog-statics\\.com$",
-        "^cdn\\d-epicgames-\\d+\\.file\\.myqcloud\\.com$",
-        "^epicgames-download\\d-\\d+\\.file\\.myqcloud\\.com$"
+        "^images(-\\d)?\\.gog-statics\\.com$"
       ]
     }
   ]
