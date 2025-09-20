@@ -3,19 +3,6 @@
   "rules": [
     {
       "domain_suffix": [
-        "bilibiligame.cn",
-        "bilibiligame.co",
-        "bilibiligame.net",
-        "biligame.co",
-        "biligame.com",
-        "biligame.net",
-        "bilibiligame.cn",
-        "bilibiligame.co",
-        "bilibiligame.net",
-        "biligame.co",
-        "biligame.com",
-        "biligame.net",
-        "sl916.com",
         "battlecare.net",
         "gameitop.com",
         "gameloop.com",
@@ -101,6 +88,12 @@
         "anticheatexpert.com",
         "17roco.com",
         "roco.qq.com",
+        "bilibiligame.cn",
+        "bilibiligame.co",
+        "bilibiligame.net",
+        "biligame.co",
+        "biligame.com",
+        "biligame.net",
         "kurogames.com",
         "aki-game.com",
         "mhystatic.com",
@@ -117,7 +110,14 @@
         "bhsr.com",
         "themisweeps.com",
         "yuanshen.com",
-        "juequling.com"
+        "juequling.com",
+        "sl916.com",
+        "bilibiligame.cn",
+        "bilibiligame.co",
+        "bilibiligame.net",
+        "biligame.co",
+        "biligame.com",
+        "biligame.net"
       ],
       "domain_regex": "^.+-mihayo\\.akamaized\\.net$"
     }
