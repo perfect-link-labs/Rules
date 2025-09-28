@@ -3,6 +3,7 @@
   "rules": [
     {
       "domain": [
+        "csis-prod.s3.amazonaws.com",
         "a.ppy.sh",
         "assets.ppy.sh",
         "c.ppy.sh",
@@ -11,8 +12,7 @@
         "lazer.ppy.sh",
         "notify.ppy.sh",
         "sentry.ppy.sh",
-        "spectator.ppy.sh",
-        "csis-prod.s3.amazonaws.com"
+        "spectator.ppy.sh"
       ],
       "domain_suffix": [
         "aomedia.org",
@@ -29,6 +29,15 @@
         "who.int",
         "wi-fi.org",
         "wto.org",
+        "csis.org",
+        "acousticbrainz.org",
+        "bookbrainz.org",
+        "coverartarchive.org",
+        "critiquebrainz.org",
+        "listenbrainz.org",
+        "messybrainz.org",
+        "metabrainz.org",
+        "musicbrainz.org",
         "openmaps.org",
         "openstreetmap.com",
         "openstreetmap.net",
@@ -38,10 +47,7 @@
         "osmfoundation.org",
         "stateofthemap.com",
         "stateofthemap.org",
-        "paskoocheh.com",
         "ppy.sh",
-        "rolfoundation.org",
-        "rolsociety.org",
         "archive-it.org",
         "archive.md",
         "archive.org",
@@ -50,7 +56,10 @@
         "openlibrary.org",
         "4pcdn.org",
         "4plebs.org",
-        "csis.org",
+        "ccstatic.org",
+        "creativecommons.org",
+        "creativecommons.engineering",
+        "licensebuttons.net",
         "emojipedia.org",
         "worldemojiawards.com",
         "worldemojiday.com",
@@ -59,10 +68,6 @@
         "f-droid.com",
         "f-droid.org",
         "fdroid.org",
-        "ccstatic.org",
-        "creativecommons.org",
-        "creativecommons.engineering",
-        "licensebuttons.net",
         "ieee.org",
         "ieee.tv",
         "tryengineering.org",
@@ -117,16 +122,11 @@
         "signalprocessingsociety.org",
         "technologyandsociety.org",
         "vtsociety.org",
-        "acousticbrainz.org",
-        "bookbrainz.org",
-        "coverartarchive.org",
-        "critiquebrainz.org",
-        "listenbrainz.org",
-        "messybrainz.org",
-        "metabrainz.org",
-        "musicbrainz.org",
         "nist.gov",
-        "time.gov"
+        "time.gov",
+        "paskoocheh.com",
+        "rolfoundation.org",
+        "rolsociety.org"
       ]
     }
   ]
